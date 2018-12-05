@@ -5,44 +5,45 @@ same type + different polarity = cancel
 Part 1
 Final Result?
 '''
-from itertools import tee
-def reaction(input='input.txt'):
+from string import ascii_lowercase as lower, ascii_uppercase as upper
+def stringy(input = 'input.txt'):
     with open(input) as file:
-        input = list(file.read().replace('\n',''))
-        prevInput = 0
-        while True:
-            compare = input.copy()
-            del compare[0]
+        input = file.read().strip()
+        return input
 
-            delete = []
-            store = []
+def reaction(input):
+    length = len(input)
+    subs = set([])
+    for counter, char in enumerate(lower):
+        subs.add(char + upper[counter])
+        subs.add(upper[counter] + char)
+    while True:
+        for d, combos in enumerate(subs):
+            if combos in input:
+                input = input.replace(combos, '')
+        if length == len(input):
+            return length
+        length = len(input)
 
-            for indice, char in enumerate(compare):
-                try:
-                    if  indice == store[0] + 2 and char == store[1]:
-                        #print(char, compare[indice-2])
-                        store = []
-                        print(prevInput, len(input))
+print(reaction(stringy()))
+'''
 
-                        continue
-                except IndexError:
-                    pass
-                if char.upper() == input[indice].upper():
-                        #print(char, compare[indice])
-                    delete.append(indice)
-                    delete.append(indice+1) # cancels need to be removed
-                    store = [indice, char]
+Your puzzle answer was 10368.
 
-                #print(len(input), len(compare), indice, counter)
+The first half of this puzzle is complete! It provides one gold star: *
 
-            delete.reverse() #reverse because list gets shortened
-            #print(len(delete))
-            print(prevInput, len(input))
-            if prevInput == len(input):
-                break
-            for i in delete:
-                del input[i]
-            prevInput = len(input.copy())
-            print(prevInput, len(input))
-        print(len(input))
-reaction()
+--- Part Two ---
+What is the length of the shortest polymer you can produce by removing all units of exactly one type and fully reacting the result?
+'''
+def fix(input = stringy()):
+    record = len(input)
+    print('xd' + str(record))
+    for char in lower: #removing each letter
+        input = stringy()
+        input = input.replace(char,'')
+        input = input.replace(char.upper(),'')
+        input = reaction(input) #reacting
+        if input < record: #recording lowest
+            record = input
+    return record
+print(fix())
